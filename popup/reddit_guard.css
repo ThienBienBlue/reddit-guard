@@ -1,0 +1,27 @@
+html, body {
+    width: 100px;
+}
+
+.button, .timer {
+    margin: 3% auto;
+    padding: 4px;
+    text-align: center;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.guard {
+    background-color: burlywood;
+}
+
+.guard:hover {
+    background-color: darkgoldenrod;
+}
+  
+.let_me_out {
+    background-color: lightcoral;
+}
+  
+.let_me_out:hover {
+    background-color: red;
+}
