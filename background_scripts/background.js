@@ -9,28 +9,20 @@ var secs = 0;
 var timer_active = false;
 var registered = null;
 
-async function register_script() {
-    registered = await browser.contentScripts.register({
-        matches: ["*://*.reddit.com/*"],
-        js: [{
-          code: "document.body.innerHTML = '<h1>Stop going on Reddit.<h1>'"
-        }],
-        runAt: "document_idle"
-    });
-}
-
 function start_timer() 
     /* Starts a 25 min timer. */
 {
     secs = total_time * 60;
+    browser.contentScripts.register({
+        matches: ["*://*.reddit.com/*"],
+        js: [{
+          code: "document.body.innerHTML = '<h1>Stop going on Reddit.<h1>'"
+        }]})
+        .then((promise) => {
+            registered = promise;
+        })
+        .catch(stop_timer);
     decrement();
-}
-
-function unregister_script() {
-    if (registered) {
-        registered.unregister();
-        registered = null;
-    }
 }
 
 function decrement()
@@ -51,7 +43,10 @@ function decrement()
 function stop_timer()
     /* Stops the timer early. */
 {
-    unregister_script();
+    if (registered) {
+        registered.unregister();
+        registered = null;
+    }
     timer_active = false;
     secs = 0;
     browser.runtime.sendMessage({
@@ -63,7 +58,6 @@ browser.runtime.onMessage.addListener((message) => {
     if (message.call === "begin timer") {
         if (!timer_active) {
             start_timer();
-            register_script();
         }
         timer_active = true;
     }
